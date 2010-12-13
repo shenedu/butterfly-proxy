@@ -6,6 +6,22 @@ import java.util.List;
 
 public class Configration {
 
+	public final static List<MagicBit> HTTPMAGIC = new ArrayList<MagicBit>();
+	public final static List<MagicBit> REMOTEMAGIC = new ArrayList<MagicBit>();
+	static {
+		HTTPMAGIC.add(new MagicBit('G', 'E')); // GET
+		HTTPMAGIC.add(new MagicBit('P', 'O')); // GOST
+		HTTPMAGIC.add(new MagicBit('P', 'U')); // PUT
+		HTTPMAGIC.add(new MagicBit('H', 'E')); // HEAD
+		HTTPMAGIC.add(new MagicBit('O', 'P')); // OPTIONS
+		HTTPMAGIC.add(new MagicBit('P', 'A')); // PATCH
+		HTTPMAGIC.add(new MagicBit('D', 'E')); // DELETE
+		HTTPMAGIC.add(new MagicBit('T', 'R')); // TRACE
+		HTTPMAGIC.add(new MagicBit('C', 'O')); // CONNECT
+
+		REMOTEMAGIC.add(new MagicBit(3, 0)); // 3, 0 is windows remote magic
+	}
+
 	private static final Configration INSTANCE = new Configration();
 	private List<ProxyItem> items = new ArrayList<ProxyItem>();
 
@@ -54,22 +70,8 @@ public class Configration {
 	}
 
 	public Configration() {
-		List<MagicBit> httpMagics = new ArrayList<MagicBit>();
-		httpMagics.add(new MagicBit('G', 'E')); // GET
-		httpMagics.add(new MagicBit('P', 'O')); // GOST
-		httpMagics.add(new MagicBit('P', 'U')); // PUT
-		httpMagics.add(new MagicBit('H', 'E')); // HEAD
-		httpMagics.add(new MagicBit('O', 'P')); // OPTIONS
-		httpMagics.add(new MagicBit('P', 'A')); // PATCH
-		httpMagics.add(new MagicBit('D', 'E')); // DELETE
-		httpMagics.add(new MagicBit('T', 'R')); // TRACE
-		httpMagics.add(new MagicBit('C', 'O')); // CONNECT
-		items.add(new ProxyItem("192.168.0.82", 8080, httpMagics));
-
-		List<MagicBit> remoteMagics = new ArrayList<MagicBit>();
-		remoteMagics.add(new MagicBit(3, 0)); // 3, 0 is windows remote magic
-												// bit
-		items.add(new ProxyItem("localhost", 3389, remoteMagics));
+		items.add(new ProxyItem("localhost", 8080, HTTPMAGIC));
+		items.add(new ProxyItem("localhost", 3389, REMOTEMAGIC));
 	}
 
 	public static class MagicBit {
