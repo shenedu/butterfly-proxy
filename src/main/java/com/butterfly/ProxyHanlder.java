@@ -2,7 +2,6 @@ package com.butterfly;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ClientBootstrap;
@@ -32,7 +31,7 @@ public class ProxyHanlder extends SimpleChannelUpstreamHandler {
 
 	private static Logger logger = Logger.getLogger(ProxyHanlder.class);
 	private static ClientSocketChannelFactory cf = new NioClientSocketChannelFactory(
-	        Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
+	        ProxyServer.threadPoop, ProxyServer.threadPoop);
 	private final Object mLock = new Object();
 	// private OutboundHandler outboundHandler;
 	private volatile Channel mOutboundChannel;

@@ -3,6 +3,7 @@ package com.butterfly;
 import static org.jboss.netty.channel.Channels.pipeline;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
@@ -31,26 +32,27 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 public class ProxyServer {
 
 	private static Logger logger = Logger.getLogger(ProxyServer.class);
+	public static final ExecutorService threadPoop = Executors
+			.newCachedThreadPool();
 
 	public static void main(String[] args) throws Exception {
 		// Configure the server.
 		ServerBootstrap bootstrap = new ServerBootstrap(
-		        new NioServerSocketChannelFactory(
-		                Executors.newCachedThreadPool(),
-		                Executors.newCachedThreadPool()));
+				new NioServerSocketChannelFactory(threadPoop, threadPoop));
 
 		// Set up the event pipeline factory.
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			public ChannelPipeline getPipeline() throws Exception {
 				ChannelPipeline pipeline = pipeline();
-				pipeline.addLast("decoder", new ProxyDecoder());
+				pipeline.addLast("proxydecoder", new ProxyDecoder());
 				return pipeline;
 			}
 		});
 
+		final int port = 8080;
 		// Bind and start to accept incoming connections.
-		bootstrap.bind(new InetSocketAddress(8080));
-		logger.debug("listern on port 8080");
+		bootstrap.bind(new InetSocketAddress(port));
+		logger.debug("listern on port " + port);
 
 	}
 }
