@@ -122,7 +122,7 @@ public class Configration {
 
 		@Override
 		public String toString() {
-			return mMagic + " >> " + host + ":" + port;
+			return host + ":" + port + " >> " + mMagic;
 		}
 
 		private volatile boolean canDelete = true;

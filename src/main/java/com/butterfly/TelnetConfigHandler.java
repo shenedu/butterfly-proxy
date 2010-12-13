@@ -46,10 +46,13 @@ public class TelnetConfigHandler extends SimpleChannelUpstreamHandler {
 	private static final String WELCOME = "welcome! hello world\n>>";
 	private static final String BAD = "opps, wrong!\n>>";
 	private static final String HELP = "commands: \n"
-			+ "1. dump dump configration;\n"
-			+ "2. add host:port magic1, magic2; magic1, magic2; ....\n"
-			+ "3. remove host:port\n" + "4. close: close this connection\n"
-			+ "5. help print this help message \n>>";
+			+ "1. dump                                          ----dump configration;\n"
+			+ "2. add host:port magic1 magic2; magic1 magic2;   ----add a proxy\n"
+			+ "       shorthand add host:port http              ----http   \n"
+			+ "       shorthand add host:port remote            ----http   \n"
+			+ "3. del host:port                                 ----remove a config\n"
+			+ "4. close                                         ----close this connection\n"
+			+ "5. help                                          ----print this help message \n>>";
 	private static final String UNKNOWNCOMMAND = "unkown command; try again\n>>";
 	private static final String CLOSEING = "closing, byte\n";
 	private static final String PROPMT = ">>";
@@ -93,7 +96,7 @@ public class TelnetConfigHandler extends SimpleChannelUpstreamHandler {
 					String mesge = conf.dump();
 					e.getChannel().write(mesge + PROPMT);
 					break;
-				case REMOVE:
+				case DEL:
 					ProxyItem item = decoder.getRemoveProxy();
 					conf.removeProxyItem(item.host, item.port);
 					e.getChannel().write(conf.dump() + PROPMT);
@@ -109,6 +112,10 @@ public class TelnetConfigHandler extends SimpleChannelUpstreamHandler {
 				case CLOSE:
 					e.getChannel().write(CLOSEING);
 					e.getChannel().close();
+					break;
+				case EMPTY:
+					e.getChannel().write(PROPMT);
+					break;
 				default:
 					e.getChannel().write(UNKNOWNCOMMAND);
 					break;
@@ -130,7 +137,7 @@ public class TelnetConfigHandler extends SimpleChannelUpstreamHandler {
 
 class TelnetCommandDecoder {
 	public static enum Command {
-		DUMP, ADD, REMOVE, HELP, UNKNOWN, CLOSE
+		DUMP, ADD, DEL, HELP, UNKNOWN, CLOSE, EMPTY
 	}
 
 	private String mCommand;
@@ -150,12 +157,19 @@ class TelnetCommandDecoder {
 		String c = mCommand.substring(0, index);
 		mCommand = mCommand.substring(index + 1);
 		String[] split = c.split(":");
-		String[] magics = mCommand.split(";");
+
 		List<MagicBit> magicBits = new ArrayList<MagicBit>();
-		for (String m : magics) {
-			m = m.trim();
-			if (m.length() > 3) {
-				magicBits.add(MagicBit.valueOf(m));
+		if (mCommand.indexOf("http") != -1) {
+			magicBits = Configration.HTTPMAGIC;
+		} else if (mCommand.indexOf("remote") != -1) {
+			magicBits = Configration.REMOTEMAGIC;
+		} else {
+			String[] magics = mCommand.split(";");
+			for (String m : magics) {
+				m = m.trim();
+				if (m.length() > 2) {
+					magicBits.add(MagicBit.valueOf(m));
+				}
 			}
 		}
 		return new ProxyItem(split[0], Integer.valueOf(split[1]), magicBits);
@@ -170,6 +184,9 @@ class TelnetCommandDecoder {
 			mCommand = mCommand.substring(index + 1).trim();
 		} else {
 			c = mCommand.toUpperCase();
+			if (c.length() == 0) {
+				c = "EMPTY";
+			}
 		}
 		try {
 			Command command = Command.valueOf(c);
