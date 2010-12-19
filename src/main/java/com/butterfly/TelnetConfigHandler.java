@@ -17,9 +17,8 @@ package com.butterfly;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
@@ -33,12 +32,9 @@ import com.butterfly.Configration.MagicBit;
 import com.butterfly.Configration.ProxyItem;
 
 /**
- * Handles a server-side channel.
  * 
- * @author <a href="http://wwwboss.org/netty/">The Netty Project</a>
- * @author <a href="http://gleamynode.net/">Trustin Lee</a>
- * 
- * @version $Rev: 2121 $, $Date: 2010-02-02 09:38:07 +0900 (Tue, 02 Feb 2010) $
+ * http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/example/telnet/package-
+ * summary.html
  */
 public class TelnetConfigHandler extends SimpleChannelUpstreamHandler {
 	private boolean authendicate = false;
@@ -58,7 +54,7 @@ public class TelnetConfigHandler extends SimpleChannelUpstreamHandler {
 	private static final String PROPMT = ">>";
 
 	private static final Logger logger = Logger
-			.getLogger(TelnetConfigHandler.class.getName());
+			.getLogger(TelnetConfigHandler.class);
 
 	@Override
 	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
@@ -72,10 +68,10 @@ public class TelnetConfigHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 
-		// Cast to a String first.
-		// We know it is a String because we put some codec in
-		// TelnetPipelineFactory.
 		try {
+			// Cast to a String first.
+			// We know it is a String because we put some codec in
+			// TelnetPipelineFactory.
 			String request = ((String) e.getMessage()).trim();
 
 			if (!authendicate) {
@@ -129,8 +125,7 @@ public class TelnetConfigHandler extends SimpleChannelUpstreamHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		logger.log(Level.WARNING, "Unexpected exception from downstream.",
-				e.getCause());
+		logger.warn("Unexpected exception from downstream.", e.getCause());
 		e.getChannel().close();
 	}
 }
