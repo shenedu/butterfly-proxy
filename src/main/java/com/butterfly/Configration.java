@@ -3,6 +3,7 @@ package com.butterfly;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Configration {
 
@@ -23,7 +24,7 @@ public class Configration {
 	}
 
 	private static final Configration INSTANCE = new Configration();
-	private List<ProxyItem> items = new ArrayList<ProxyItem>();
+	private List<ProxyItem> items = new CopyOnWriteArrayList<ProxyItem>();
 
 	public void addProxyItem(ProxyItem item) {
 		items.add(item);
