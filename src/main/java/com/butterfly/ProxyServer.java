@@ -32,13 +32,13 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 public class ProxyServer {
 
 	private static Logger logger = Logger.getLogger(ProxyServer.class);
-	public static final ExecutorService threadPoop = Executors
+	static final ExecutorService THREADPOOL = Executors
 			.newCachedThreadPool();
 
 	public static void main(String[] args) throws Exception {
 		// Configure the server.
 		ServerBootstrap bootstrap = new ServerBootstrap(
-				new NioServerSocketChannelFactory(threadPoop, threadPoop));
+				new NioServerSocketChannelFactory(THREADPOOL, THREADPOOL));
 
 		// Set up the event pipeline factory.
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {

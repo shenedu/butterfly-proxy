@@ -31,7 +31,7 @@ public class ProxyHanlder extends SimpleChannelUpstreamHandler {
 
 	private static Logger logger = Logger.getLogger(ProxyHanlder.class);
 	private static ClientSocketChannelFactory cf = new NioClientSocketChannelFactory(
-	        ProxyServer.threadPoop, ProxyServer.threadPoop);
+	        ProxyServer.THREADPOOL, ProxyServer.THREADPOOL);
 	private final Object mLock = new Object();
 	// private OutboundHandler outboundHandler;
 	private volatile Channel mOutboundChannel;
